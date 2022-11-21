@@ -1,0 +1,113 @@
+
+#This Code will create tax rate by using same name
+#with different ID
+
+from selenium.webdriver.common.keys import Keys
+import time
+from behave import *
+from selenium import webdriver
+from selenium.webdriver.chrome.webdriver import WebDriver
+from selenium.webdriver.common.by import By
+from pytest_bdd import scenario, given, when, then
+
+#Chrome Web Driver
+driver: WebDriver = webdriver.Chrome("C:\Chrome\chromedriver_win32\chromedriver.exe")
+
+#Going into the Website
+driver.get("http://localhost:4200")
+
+#Maximize the Window
+driver.maximize_window()
+
+#Login Code
+@given(u': I Launched the Chrome Web Browser And Login the Portal')
+def loginportal():
+    driver.get("http://localhost:4200")
+    time.sleep(0.75)
+    driver.find_element(By.NAME, "username").send_keys("admin@shopizer.com")
+    time.sleep(0.75)
+    driver.find_element(By.NAME, "password").send_keys("password")
+    time.sleep(0.75)
+    ele = driver.find_element(By.CLASS_NAME, "container-login100-form-btn")
+    time.sleep(2)
+    ele.click()
+    time.sleep(2)
+    driver.get("http://localhost:4200/#/pages/tax-management/classes-list")
+loginportal()
+
+#Create Tax Class with Proper Input
+@When(u'I create tax class with proper name and code ')
+def CreateTaxClass():
+    driver.find_element(By.XPATH, "/html/body/ngx-app/div/ngx-pages/ngx-sample-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-tax/div/div/ngx-tax-class-list/nb-card/nb-card-body/div/form/div[2]/a/label").click()
+    driver.find_element(By.XPATH, "/html/body/ngx-app/div/ngx-pages/ngx-sample-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-tax/div/div/ngx-tax-class-add/div/form/div/div/nb-card/nb-card-body/div/div[1]/div/input").send_keys("1234")
+    driver.find_element(By.XPATH,"/html/body/ngx-app/div/ngx-pages/ngx-sample-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-tax/div/div/ngx-tax-class-add/div/form/div/div/nb-card/nb-card-body/div/div[2]/div/input").send_keys("Sales")
+    time.sleep(4)
+    driver.find_element(By.XPATH, "/html/body/ngx-app/div/ngx-pages/ngx-sample-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-tax/div/div/ngx-tax-class-add/div/nb-card-header/div[2]/button").click()
+    time.sleep(4)
+CreateTaxClass()
+
+
+#Create Tax Class with Empty Input
+@When(u'I All  empty Fields in the Store ')
+def ALLEMPTY():
+    driver.find_element(By.XPATH, "/html/body/ngx-app/div/ngx-pages/ngx-sample-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-tax/div/div/ngx-tax-class-list/nb-card/nb-card-body/div/form/div[2]/a/label").click()
+    driver.find_element(By.XPATH, "/html/body/ngx-app/div/ngx-pages/ngx-sample-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-tax/div/div/ngx-tax-class-add/div/form/div/div/nb-card/nb-card-body/div/div[1]/div/input").send_keys("")
+    driver.find_element(By.XPATH,"/html/body/ngx-app/div/ngx-pages/ngx-sample-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-tax/div/div/ngx-tax-class-add/div/form/div/div/nb-card/nb-card-body/div/div[2]/div/input").send_keys("")
+    time.sleep(4)
+    driver.find_element(By.XPATH, "/html/body/ngx-app/div/ngx-pages/ngx-sample-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-tax/div/div/ngx-tax-class-add/div/nb-card-header/div[2]/button").click()
+    time.sleep(4)
+ALLEMPTY()
+time.sleep(2)
+
+element = driver.find_element(By.XPATH, "/html/body/ngx-app/div/ngx-pages/ngx-sample-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-tax/div/div/ngx-tax-class-add/div/nb-card-header/div[2]/button")
+if driver.execute_script("arguments[0].click();", element) == None:
+    print("Button Not Executed with Empty Input")
+else:
+    driver.execute_script("arguments[0].click();", element)
+time.sleep(0.75)
+
+#Going into the Store List Again
+#Create Tax Class with Same Name and Different ID
+@When(u'I Create Store with Same Name ')
+def CreateWithDiferentName():
+    driver.get("http://localhost:4200/#/pages/tax-management/classes-list")
+    driver.find_element(By.XPATH, "/html/body/ngx-app/div/ngx-pages/ngx-sample-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-tax/div/div/ngx-tax-class-list/nb-card/nb-card-body/div/form/div[2]/a/label").click()
+    driver.find_element(By.XPATH, "/html/body/ngx-app/div/ngx-pages/ngx-sample-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-tax/div/div/ngx-tax-class-add/div/form/div/div/nb-card/nb-card-body/div/div[1]/div/input").send_keys("12")
+    if driver.find_element(By.XPATH,"/html/body/ngx-app/div/ngx-pages/ngx-sample-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-tax/div/div/ngx-tax-class-add/div/form/div/div/nb-card/nb-card-body/div/div[2]/div/input").send_keys("Sales")==None:
+        print("Name is Already Existed")
+        print("Butt Tax Class are Created")
+    time.sleep(4)
+    driver.find_element(By.XPATH, "/html/body/ngx-app/div/ngx-pages/ngx-sample-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-tax/div/div/ngx-tax-class-add/div/nb-card-header/div[2]/button").click()
+    time.sleep(4)
+CreateWithDiferentName()
+
+
+
+#Going into the Store List Again
+#Create Tax Class with Same ID and Different Name
+@When(u'I Create Store with Same ID ')
+def CreateWithDiferentID():
+    driver.get("http://localhost:4200/#/pages/tax-management/classes-list")
+    driver.find_element(By.XPATH, "/html/body/ngx-app/div/ngx-pages/ngx-sample-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-tax/div/div/ngx-tax-class-list/nb-card/nb-card-body/div/form/div[2]/a/label").click()
+    if driver.find_element(By.XPATH, "/html/body/ngx-app/div/ngx-pages/ngx-sample-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-tax/div/div/ngx-tax-class-add/div/form/div/div/nb-card/nb-card-body/div/div[1]/div/input").send_keys("1234")==None:
+        print("Code is Already Existed")
+        print("And Tax Class are NOT Created")
+    driver.find_element(By.XPATH,"/html/body/ngx-app/div/ngx-pages/ngx-sample-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-tax/div/div/ngx-tax-class-add/div/form/div/div/nb-card/nb-card-body/div/div[2]/div/input").send_keys("Income")
+    time.sleep(4)
+    driver.find_element(By.XPATH, "/html/body/ngx-app/div/ngx-pages/ngx-sample-layout/nb-layout/div[1]/div/div/div/div/nb-layout-column/ngx-tax/div/div/ngx-tax-class-add/div/nb-card-header/div[2]/button").click()
+    time.sleep(4)
+CreateWithDiferentID()
+
+# Delete Tax Class
+@When(u'I Delete Store ')
+def DeleteTaxClass():
+    driver.get("http://localhost:4200/#/pages/tax-management/classes-list")
+    ele = driver.find_element(By.CLASS_NAME, "nb-trash")
+    ele.click()
+    but = driver.find_element(By.XPATH,"//*[@id='cdk-overlay-0']/nb-dialog-container/ngx-showcase-dialog/nb-card/nb-card-footer/button[2]")
+    but.click()
+    time.sleep(4)
+DeleteTaxClass()
+
+time.sleep(2)
+driver.close()
